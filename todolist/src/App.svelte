@@ -1,10 +1,16 @@
 <script>
+	import { onMount } from 'svelte'
 	export let name;
 	export let todoList = [
 		{id: 0, done: false, title: '定期券の購入'},
 		{id: 1, done: false, title: 'トイレットペーパーの購入'},
 	]
 	export let currentText = ''
+	let initFocus = null
+	const initInput = ()=>{
+		currentText = ''
+		initFocus.focus()
+	}
 	export const addTask = () => {
 		console.debug(todoList)
 		if(currentText){
@@ -15,13 +21,14 @@
 				title: currentText
 			}
 		]
-		currentText = ''
+		initInput()
 		}
 	}
 	let condition = null
 	$: filterTodoList = () => {
 		return condition === null ? todoList : todoList.filter(todo=> todo.done === condition)
 	}
+	onMount(()=>initInput())
 </script>
 
 <main>
@@ -35,7 +42,7 @@
 		<button on:click={()=>{condition = true}}>Done</button>
 	</div>
 	<div>
-		<input type="text" bind:value={currentText}>
+		<input type="text" bind:value={currentText} bind:this={initFocus}>
 		<button on:click={addTask}>Submit</button>
 	</div>
 	<div>
